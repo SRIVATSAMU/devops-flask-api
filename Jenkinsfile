@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -23,6 +24,22 @@ pipeline {
                     test -f docker-compose.yml
                     test -f README.md
                     echo "All required project files are present!"
+                '''
+            }
+        }
+
+        stage('Install Test Dependencies') {
+            steps {
+                sh '''
+                    python3 -m pip install --user Flask pytest
+                '''
+            }
+        }
+
+        stage('Run Python Tests') {
+            steps {
+                sh '''
+                    python3 -m pytest -v
                 '''
             }
         }
