@@ -23,15 +23,19 @@ pipeline {
                     test -f docker/Dockerfile
                     test -f docker-compose.yml
                     test -f README.md
+                    test -f tests/test_api.py
                     echo "All required project files are present!"
                 '''
             }
         }
 
-        stage('Install Test Dependencies') {
+        stage('Setup Python Environment') {
             steps {
                 sh '''
-                    python3 -m pip install --user Flask pytest
+                    python3 -m venv .venv
+                    .venv/bin/python -m pip install --upgrade pip
+                    .venv/bin/python -m pip install -r app/requirements.txt
+                    .venv/bin/python -m pip install pytest
                 '''
             }
         }
@@ -39,7 +43,7 @@ pipeline {
         stage('Run Python Tests') {
             steps {
                 sh '''
-                    python3 -m pytest -v
+                    .venv/bin/python -m pytest -v
                 '''
             }
         }
